@@ -1,0 +1,12 @@
+JPath
+
+author: Spondon Saha
+
+
+Intended to work just like XPath, but for Json files. The syntax is aimed to be
+just like Xpath. Currently, it does not support all Xpath-like functionalities,
+but can accept a path-string and use it get value for a certain element
+
+Future plans are to provide support for wild-characters and iterables.
+
+This document will be updated as new functionalities appear.
