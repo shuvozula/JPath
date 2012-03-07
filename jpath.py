@@ -28,15 +28,66 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 """
+import __builtin__
 
 __author__ = 'spondonsaha@gmail.com (Spondon Saha)'
 
-import simplejson as json
+import json
 
 
 class Error(Exception):
     """Base Exception class."""
     pass
+
+
+def open(file_path=None, file_obj=None, **kwargs):
+    """Opens a file-like object and reads its contents into a json object.
+    
+    Arguments:
+        file_path: Path to the json file
+    
+    Raises:
+        IOError: thrown if invalid file-path is given
+        ValueError: thrown if error is encountered when loading json-data
+    
+    Returns:
+        A JPath object.
+    """
+    # Perform validations
+    if not file_path and not file_obj:
+        raise ValueError('Nothing to open: No file-path, no file-object!')
+    if file_obj and not isinstance(file_obj, file):
+        raise IOError('Invalid file-like-object!\n%s' % file_obj.__class__)
+    # open the file if not file-like-object provided
+    if not file_obj:
+        file_obj = __builtin__.open(file_path, 'rb')
+    # read in all the contents into memory
+    # TODO: need to optimize this
+    json_string = file_obj.read()
+    # return the JPath object created from the file-like-object provided
+    return JPath(json_string)
+
+
+def read(json_string=None):
+    """Takes the provided JSON string and returns a JPath object.
+
+    Expects a json string, either from a .read() operation or an arbitrary
+    string containing json data. This string is then passed onto Jpath
+    constructor to return an object of JPath.
+
+    Arguments:
+        json_string: An arbitrary json string.
+
+    Raises:
+        ValueError: Iff the provided json_string is None.
+
+    Returns:
+        A JPath object.
+    """
+    if not json_string:
+        raise ValueError('No json string provided!')
+    else:
+        return JPath(json_string)
 
 
 class JPath(object):
@@ -47,58 +98,12 @@ class JPath(object):
         if not json_string:
             raise ValueError('No Json string provided! Use open() or read().')
         else:
-            self.json_data = self.__load_json(json_string)
+            self.json_data = self._load_json(json_string)
 
-    @classmethod
-    def open(cls, file_path=None, file_obj=None, **kwargs):
-        """Opens a file-like object and reads its contents into a json object.
-        
-        Arguments:
-            file_path: Path to the json file
-        
-        Raises:
-            IOError: thrown if invalid file-path is given
-            ValueError: thrown if error is encountered when loading json-data
-        
-        Returns:
-            A JPath object.
-        """
-        # Perform validations
-        if not file_path and not file_obj:
-            raise ValueError('Nothing to open: No file-path, no file-object!')
-        if file_obj and not isinstance(file_obj, file):
-            raise IOError('Invalid file-like-object!\n%s' % file_obj.__class__)
-        # open the file if not file-like-object provided
-        if not file_obj:
-            file_obj = open(file_path, 'rb')
-        # read in all the contents into memory
-        # TODO: need to optimize this
-        json_string = file_obj.read()
-        # return the JPath object created from the file-like-object provided
-        return cls(json_string)
+    def __str__(self):
+        """Pretty print json string."""
+        return json.dumps(self.json_data, sort_keys=True, indent=4)
 
-    @classmethod
-    def read(cls, json_string=None):
-        """Takes the provided JSON string and returns a JPath object.
-    
-        Expects a json string, either from a .read() operation or an arbitrary
-        string containing json data. This string is then passed onto Jpath
-        constructor to return an object of JPath.
-    
-        Arguments:
-            json_string: An arbitrary json string.
-
-        Raises:
-            ValueError: Iff the provided json_string is None.
-
-        Returns:
-            A JPath object.
-        """
-        if not json_string:
-            raise ValueError('No json string provided!')
-        else:
-            return cls(json_string)
-    
     def _load_json(self, json_string=None):
         """Creates a json object made out of the provided json string.
 
@@ -109,12 +114,11 @@ class JPath(object):
             ValueError: Iff json_string is set to None.
 
         Returns:
-            A simplejson object.
+            A json object.
         """
         if not json_string:
             raise ValueError('No json string provided!')
-        self.json_data = json.loads(json_string)
-        
+        return json.loads(json_string)
 
     def _get_element(self, json_data, path=None, tokens=None):
         """Much like XPath, but for Json.
@@ -147,9 +151,8 @@ class JPath(object):
             return self._get_element(json_data=new_json_data, tokens=tokens)
         else:
             return json_data[tokens[0]]
-    
-    
-    def get(self, json_path, json_data=self.json_data):
+
+    def get(self, json_path):
         """Gets migration configurations from settings file.
         
         Arguments:
@@ -163,9 +166,9 @@ class JPath(object):
           the setting value requested by the provided json-path.
         """
         req_setting = None
-        if not json_data:
+        if not self.json_data:
             raise Error('JSON data did not load successfully.')
         try:
-            return self._get_element(json_data=json_data, path=json_path)
+            return self._get_element(json_data=self.json_data, path=json_path)
         except Exception or StandardError, ex:
             raise Error('Wrong JPath provided or data is invalid!\n%s' % ex)

@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 setup(
-    name = 'python-jpath',
+    name = 'jpath',
     version = '0.1',
     author = 'Spondon Saha',
     author_email = 'spondonsaha@gmail.com',
