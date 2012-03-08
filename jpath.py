@@ -28,10 +28,10 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 """
-import __builtin__
 
 __author__ = 'spondonsaha@gmail.com (Spondon Saha)'
 
+import io
 import json
 
 
@@ -40,7 +40,7 @@ class Error(Exception):
     pass
 
 
-def open(file_path=None, file_obj=None, **kwargs):
+def open(file_path=None, file_obj=None):
     """Opens a file-like object and reads its contents into a json object.
     
     Arguments:
@@ -60,7 +60,7 @@ def open(file_path=None, file_obj=None, **kwargs):
         raise IOError('Invalid file-like-object!\n%s' % file_obj.__class__)
     # open the file if not file-like-object provided
     if not file_obj:
-        file_obj = __builtin__.open(file_path, 'rb')
+        file_obj = io.open(file_path, 'rb')
     # read in all the contents into memory
     # TODO: need to optimize this
     json_string = file_obj.read()
