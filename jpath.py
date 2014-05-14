@@ -31,11 +31,6 @@
 
 __author__ = 'spondonsaha@gmail.com (Spondon Saha)'
 
-"""General parser module that contains various parsers.
-
-Currently, only houses the JPath parser class.
-"""
-
 import json
 import re
 
