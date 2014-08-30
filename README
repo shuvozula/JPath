@@ -2,11 +2,13 @@ JPath
 
 author: Spondon Saha
 
-
-Intended to work just like XPath, but for Json files. The syntax is aimed to be
-just like Xpath. Currently, it does not support all Xpath-like functionalities,
-but can accept a path-string and use it get value for a certain element
-
-Future plans are to provide support for wild-characters and iterables.
-
-This document will be updated as new functionalities appear.
+his parser can be used to manage JSON data, by performing get, set operations
+on it using JPath queries. These Jpath queries look very similar to Xpath
+queries and carries over many of the similar syntactic goodies, such as
+defining predicates to fetch nodes with a certain value: [1] or [2] to fetch
+the first or second element respectively, or [@foo=bar] which fetches a node
+whose attribute called "foo" has the value "bar". To iterate over large data
+sets and perform get or set operations over each iter-element, IterItems()
+can be used, with the only constraint that the provided Jpath query has
+an iterable token "[*]", otherwise a QueryError is raised. Other syntactic
+goodies will be added as this library matures.
