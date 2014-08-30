@@ -1,7 +1,5 @@
 JPath
 
-author: Spondon Saha
-
 This parser can be used to manage JSON data, by performing get, set operations
 on it using JPath queries. These Jpath queries look very similar to Xpath
 queries and carries over many of the similar syntactic goodies, such as
